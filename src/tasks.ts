@@ -24,8 +24,27 @@ taskRoute.get("/", (req: Request, res: Response) => {
     status: 200,
     message: "success",
     data: {
-      results: tasks,
-      totalCount: tasks.length,
+      results: [
+        {
+          id: 1,
+          title: 'Work on SSP',
+          description: 'THis is taks is created to start working on ssp app.',
+          isCompleted: true
+        },
+        {
+          id: 2,
+          title: 'Work on SSP',
+          description: 'THis is taks is created to start working on ssp app.',
+          isCompleted: true
+        },
+        {
+          id: 3,
+          title: 'Work on SSP',
+          description: 'THis is taks is created to start working on ssp app.',
+          isCompleted: true
+        }
+      ],
+      totalCount: 3,
     },
   });
 });
