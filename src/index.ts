@@ -5,7 +5,12 @@ const app = express();
 const port = 8080;
 app.use(express.json());
 app.use("/task", taskRoute);
-// const server=http.createServer(app);
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello, Port is running!");
+});
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello, Port is running!");
+});
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello, Port is running!");
 });

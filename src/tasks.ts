@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { Task } from "interfaces/taskInterface";
+import { Task } from "./interfaces/taskInterface";
 
 const taskRoute = Router();
 let tasks: Task[] = [];
