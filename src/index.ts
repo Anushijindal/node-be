@@ -8,22 +8,19 @@ const middleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await next();
     if (!res.headersSent) {
-      const status = res.locals.status || 200;
-      const message = res.locals.message || "success";
-      const data = res.locals.data || null;
-
-      res.status(status).json({
-        status,
+      const {data, message, statusCode} = res.locals.response;
+      res.status(statusCode).json({
+        statusCode,
         message,
         data,
       });
     }
-  } catch (err) {
-    res.status(500).json({
-      status: 500,
-      message: "Internal Server Error",
-      data: { success: false },
-    });
+  } catch (err: any) {
+    res.locals.response = {
+      data: {},
+      message: err?.message || err?.toString() || 'Unknown error',
+      statusCode: err?.statusCode || 520
+    }; 
   }
 };
 

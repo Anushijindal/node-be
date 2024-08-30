@@ -5,18 +5,19 @@ let tasks: Task[] = [];
 
 
 export const getAllTasks = (req: Request, res: Response) => {
-  console.log(typeof(tasks.length));
-  
-  if (tasks.length > 0) {
-    res.locals.data = { result: tasks, totalCount: tasks.length };
-    res.locals.status = 200;
-    res.locals.message = "success";
-    
-  } else {
-    res.locals.data = { success:true };
-    res.locals.status = 404;
-    res.locals.message = "Nothing to show";
-  }
+  try{
+    res.locals.response = {
+      data: { result: tasks, totalCount: tasks.length },
+      message: 'message',
+      statusCode: 200
+    };
+  } catch(err: any) {
+    res.locals.response = {
+      data: {},
+      message: err?.message || err?.toString() || 'Unknown error',
+      statusCode: err?.statusCode || 520
+    };  
+  } 
 };
 
 export const addTask = (req: Request, res: Response) => {
@@ -33,21 +34,24 @@ export const addTask = (req: Request, res: Response) => {
 };
 
 export const getTask = (req: Request, res: Response) => {
-  const task = tasks.find((reqTask) => reqTask.id == parseInt(req.params.id));
-  if (!task) {
-    // res.status(404).json({
-    //   status: 404,
-    //   message: "Not Found",
-    //   data: { success: false },
-    // });
-    res.locals.data = { success: false };
-    res.locals.status = 404;
-    res.locals.message = "Not Found";
-    return;
-  }
-  res.locals.data = { details: task };
-  res.locals.status = 200;
-  res.locals.message = "success";
+  try{
+    const task = tasks.find((reqTask) => reqTask.id == parseInt(req.params.id));
+    if (!task?.id) {
+      throw BadRequest('Not found');
+    }
+    res.locals.response = {
+      data: { details: task },
+      message: 'message',
+      statusCode: 200
+    };
+  } catch(err: any) {
+    res.locals.response = {
+      data: {},
+      message: err?.message || err?.toString() || 'Unknown error',
+      statusCode: err?.statusCode || 520
+    };  
+  } 
+
 };
 
 export const editTask = (req: Request, res: Response) => {
