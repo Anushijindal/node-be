@@ -12,24 +12,6 @@ taskRoute.route("/").get((req: Request, res: Response) => {
 });
 taskRoute.get("/:id", (req: Request, res: Response) => {
 return getTask(req,res)
-  // const task = tasks.find((reqTask) => reqTask.id == parseInt(req.params.id));
-  // if (!task) {
-  //   res.status(404).send({
-  //     status: 404,
-  //     message: "Not Found",
-  //     data: {
-  //       result: "Task Not Found",
-  //     },
-  //   });
-  // } else {
-  //   res.send({
-  //     status: 200,
-  //     message: "success",
-  //     data: {
-  //       details: task,
-  //     },
-  //   });
-  // }
 });
 taskRoute.put("/:id", (req: Request, res: Response) => {
   return editTask(req,res);
