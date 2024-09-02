@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+provider = "prisma-client-js"
+}
+
+datasource db {
+provider = "postgresql"
+url = env("DATABASE_URL")
+}
+model EmRole {
+  roleId         Int       @id @default(autoincrement()) @map("role_id")
+  roleName       String    @map("role_name") @db.VarChar(30)
+  roleUpdatedAt  DateTime  @map("role_updated_at") @updatedAt
+  roleCreatedAt  DateTime  @map("role_created_at") @default(now())
+  users          EmUser[]
+  @@map("em_roles")
+}
+
+
+enum Gender {
+Male
+female
+}
+enum ManagementTool {
+Trello
+Zira
+}
+enum RepositoryTool {
+GitHub
+GitLab
+BigBucket
+}
+enum ProjectStatus {
+Development_Started
+Launched
+Coming_Soon
+}
+model EmUser {
+userId Int @map("user_id") @id @default(autoincrement())
+userFirstName String @map("user_first_name") @db.VarChar(30)
+userLastName String @map("user_last_name") @db.VarChar(30)
+userEmail String @map("user_email") @db.VarChar(30)
+userPhone String @map("user_phone") @db.VarChar(10)
+userStreetAddress String @map("user_street_address") @db.VarChar(60)
+userCity String @map("user_city_name") @db.VarChar(20)
+userState String @map("user_state_name") @db.VarChar(20)
+userCountry String @map("user_country_name") @db.VarChar(20)
+userUpdatedAt DateTime @map("user_updated_at") @updatedAt
+userDeletedAt DateTime? @map("user_deleted_at")
+userCreatedAt DateTime @map("user_created_at") @default(now())
+userPassword String @map("user_password") @db.VarChar(200)
+userGender Gender @map("user_gender")
+userRoleId Int @map("user_role_id")
+role EmRole @relation(fields: [userRoleId], references: [roleId])
+@@index([userRoleId])
+@@map("em_users")
+project EmProject[]
+}
+
+model EmCountry {
+countryId Int @map("country_id") @id @default(autoincrement())
+countryName String @map("country_name") @db.VarChar(30)
+states EmState[]
+@@map("em_countries")
+}
+model EmState {
+stateId Int @map("state_id") @id @default(autoincrement())
+stateName String @map("state_name") @db.VarChar(30)
+countryId Int @map("country_id")
+country EmCountry @relation(fields:[countryId],references:[countryId])
+@@index([countryId])
+cities EmCity[]
+@@map("em_states")
+}
+model EmCity {
+cityId Int @map("city_id") @id @default(autoincrement())
+cityName String @map("city_name") @db.VarChar(30)
+stateId Int @map("state_id")
+state EmState @relation(fields:[stateId],references:[stateId])
+@@index([stateId])
+@@map("em_cities")
+}
+model EmProject {
+projectId Int @map("project_id") @id @default(autoincrement())
+projectName String @map("project_name") @db.VarChar(20)
+projectTechnology String @map("project_technology") @db.VarChar(30)
+projectStartDate DateTime @map("project_start_date") 
+projectDeadlineDate DateTime @map("project_deadline_date") 
+projectLead String @map("project_lead") @db.VarChar(20)
+projectManager String @map("project_manager") @db.VarChar(20)
+projectClient String @map("project_client") @db.VarChar(20)
+managementTool ManagementTool @map("project_management_tool")
+managementToolLink String @map("project_management_tool_link") @db.VarChar(60)
+repositoryTool RepositoryTool @map("project_repository_tool")
+repositoryToolLink String @map("project_repository_tool_link") @db.VarChar(60)
+projectDescription String @map("project_description") @db.VarChar(100)
+projectStatus ProjectStatus @map("project_status")
+projectUpdatedAt DateTime @map("project_updated_at") @updatedAt
+projectDeletedAt DateTime? @map("project_deleted_at")
+projectCreatedAt DateTime @map("project_created_at") @default(now())
+projectUserId Int @map("project_user_id")
+user EmUser @relation(fields: [projectUserId], references: [userId])
+@@index([projectUserId])
+@@map("em_projects")
+}

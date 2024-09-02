@@ -2,6 +2,9 @@
   "name": "em-be",
   "version": "1.0.0",
   "main": "index.js",
+  "prisma": {
+    "seed": "ts-node ./src/prisma/seeds/seed.ts"
+  },
   "scripts": {
     "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,13 +14,14 @@
   "license": "ISC",
   "description": "node_modules# node-be",
   "devDependencies": {
-    "@types/node": "^22.5.1",
+    "@types/node": "^22.5.2",
     "nodemon": "^3.1.4",
     "prisma": "^5.19.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "@prisma/client": "^5.19.0",
     "@types/body-parser": "^1.19.5",
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.7",
@@ -27,6 +31,8 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
   }
 }

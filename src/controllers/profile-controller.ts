@@ -3,7 +3,6 @@ import { commonResponse } from "../commonResponse";
 import { Profile } from "../interfaces/profile-interface";
 
 export const getMyProfile = (req: Request, res: Response) => {
-  //   return res.json("hi");
   return commonResponse(req, res, {
     status: 200,
     message: "success",
