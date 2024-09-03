@@ -1,38 +1,41 @@
 import { Request, Response } from "express";
 // import "../dummyData";
 // import { usersData } from "../dummyData/users";
-import { Profile } from "../interfaces/profile-interface";
-import { usersData } from "../dummyData/users";
-import { BadRequest } from "../errorMessages";
+import { BadRequest, UnAuthorized } from "../errorMessages";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { validUser } from "../services/login.service";
 const prisma = new PrismaClient();
 export const loginUser = async (req: Request, res: Response) => {
   const { userEmail, userPassword } = req.body;
   console.log(userPassword);
 
   try {
-    const user = await prisma.emUser.findUnique({
-      where: { userEmail },
-    });
-    console.log(user);
-    const match = await bcrypt.compare(userPassword, user!.userPassword);
-    if (user && match) {
+    if (!req.body.userEmail) {
+      throw BadRequest("Please Enter Email.");
+    }
+    if (!req.body.userPassword) {
+      throw BadRequest("Please Enter Password.");
+    }
+    const valid = await validUser(userEmail, userPassword);
+    console.log(valid);
+
+    if (valid) {
       res.send({
-        data: { userId: user.userId },
+        data: { userId: valid.id },
         message: "You are successfully Logged in",
         statusCode: 200,
       });
       res.locals.response = {
-        data: { userId: user.userId },
+        data: { userId: valid.email },
         message: "You are successfully Logged in",
         statusCode: 200,
       };
     } else {
-      throw BadRequest("Invalid UserName or Password");
+      throw UnAuthorized("Invalid UserName or Password");
     }
   } catch (err: any) {
-    res.send({
+    res.status(err.statusCode||520).send({
       data: {},
       message: err?.message || err?.toString() || "Unknown error",
       statusCode: err?.statusCode || 520,
