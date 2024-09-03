@@ -1,30 +1,34 @@
 import { Request, Response } from "express";
 import { commonResponse } from "../commonResponse";
 import { Profile } from "../interfaces/profile-interface";
-
-export const getMyProfile = (req: Request, res: Response) => {
-  return commonResponse(req, res, {
-    status: 200,
-    message: "success",
-    data: {
-      result: {
-        userAddress: "cheeka",
-        userCity: "Kaithal",
-        userCountry: "India",
-        userEmail: "anushi@gmail.com",
-        userFirstName: "Anushi",
-        userGender: "female",
-        userImage: "abc",
-        userLastName: "Jindal",
-        userPhone: "9655874634",
-        userRoleName: "developer",
-        userState: "Haryana",
-      },
-    },
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+export const getMyProfile = async (req: Request, res: Response) => {
+  const id = req.body.id;
+  const user = await prisma.emUser.findUnique({
+    where: { userId: id },
   });
+  if (user) {
+    res.send({
+      statusCode: 200,
+      message: "success",
+      data: {
+        firstname: user.userFirstName,
+        lastname: user.userLastName,
+        email: user.userEmail,
+        phone: user.userPhone,
+        address: user.userStreetAddress,
+        country: user.userCountry,
+        state: user.userState,
+        city: user.userCity,
+        gender: user.userGender,
+        role: user.userRoleId,
+      },
+    });
+  }
 };
-export const editProfile=(req:Request,res:Response)=>{
-    // const profile:Profile={
-    //     userAddress:req.body.userAddress||
-    // }
-}
+export const editProfile = (req: Request, res: Response) => {
+  // const profile:Profile={
+  //     userAddress:req.body.userAddress||
+  // }
+};

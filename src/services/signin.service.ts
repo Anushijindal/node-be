@@ -33,9 +33,21 @@ export const validEmail = async (email: string) => {
     return false;
   }
 };
-export const validPassword =  (password: string) => {
-    const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+export const validPassword = (password: string) => {
+  const passwordRegex =
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
   if (passwordRegex.test(password)) {
+    return true;
+  } else {
+    return false;
+  }
+};
+export const emailExists = async (email: string) => {
+  const user = await prisma.emUser.findUnique({
+    where: { userEmail: email },
+  });
+  console.log(user);
+  if (user) {
     return true;
   } else {
     return false;
