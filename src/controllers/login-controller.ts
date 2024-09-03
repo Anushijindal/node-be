@@ -4,17 +4,25 @@ import { Request, Response } from "express";
 import { Profile } from "../interfaces/profile-interface";
 import { usersData } from "../dummyData/users";
 import { BadRequest } from "../errorMessages";
-
-export const loginUser = (req: Request, res: Response) => {
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+const prisma = new PrismaClient();
+export const loginUser = async (req: Request, res: Response) => {
   const { userEmail, userPassword } = req.body;
-  const user = usersData.find(
-    (user: Profile) =>
-      user.userEmail == userEmail && user.userPassword == userPassword
-  );
+  console.log(userPassword);
 
-  console.log(user);
   try {
-    if (user) {
+    const user = await prisma.emUser.findUnique({
+      where: { userEmail },
+    });
+    console.log(user);
+    const match = await bcrypt.compare(userPassword, user!.userPassword);
+    if (user && match) {
+      res.send({
+        data: { userId: user.userId },
+        message: "You are successfully Logged in",
+        statusCode: 200,
+      });
       res.locals.response = {
         data: { userId: user.userId },
         message: "You are successfully Logged in",
@@ -24,6 +32,11 @@ export const loginUser = (req: Request, res: Response) => {
       throw BadRequest("Invalid UserName or Password");
     }
   } catch (err: any) {
+    res.send({
+      data: {},
+      message: err?.message || err?.toString() || "Unknown error",
+      statusCode: err?.statusCode || 520,
+    });
     res.locals.response = {
       data: {},
       message: err?.message || err?.toString() || "Unknown error",

@@ -1,12 +1,10 @@
 import express, { NextFunction, Request, Response } from "express";
 import routes from "./routes/index";
-import dotenv from "dotenv";
 import { PORT } from "./config";
 const jwt = require("jsonwebtoken");
 const app = express();
+
 const port = PORT;
-dotenv.config();
-dotenv.config();
 const middleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await next();
