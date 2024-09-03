@@ -1,21 +1,25 @@
 import { Request, Response } from "express";
 // import "../dummyData";
 // import { usersData } from "../dummyData/users";
-import { BadRequest, UnAuthorized } from "../errorMessages";
+import { BadRequest, NotFound, UnAuthorized } from "../errorMessages";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { validUser } from "../services/login.service";
+import { isEmailExists, validUser } from "../services/login.service";
 const prisma = new PrismaClient();
 export const loginUser = async (req: Request, res: Response) => {
   const { userEmail, userPassword } = req.body;
   console.log(userPassword);
 
   try {
-    if (!req.body.userEmail) {
+    if (!userEmail) {
       throw BadRequest("Please Enter Email.");
     }
-    if (!req.body.userPassword) {
+    if (!userPassword) {
       throw BadRequest("Please Enter Password.");
+    }
+    const emailExists: boolean = await isEmailExists(userEmail);
+    if (!emailExists) {
+      throw NotFound("Email doesn't exists");
     }
     const valid = await validUser(userEmail, userPassword);
     console.log(valid);
@@ -35,7 +39,7 @@ export const loginUser = async (req: Request, res: Response) => {
       throw UnAuthorized("Invalid UserName or Password");
     }
   } catch (err: any) {
-    res.status(err.statusCode||520).send({
+    res.status(err.statusCode || 520).send({
       data: {},
       message: err?.message || err?.toString() || "Unknown error",
       statusCode: err?.statusCode || 520,
