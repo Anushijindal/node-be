@@ -1,12 +1,17 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 // import "../dummyData";
 // import { usersData } from "../dummyData/users";
 import { BadRequest, NotFound, UnAuthorized } from "../errorMessages";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { isEmailExists, validUser } from "../services/login.service";
+import { generateJwtToken } from "../services/jwt.service";
 const prisma = new PrismaClient();
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { userEmail, userPassword } = req.body;
   console.log(userPassword);
 
@@ -25,29 +30,22 @@ export const loginUser = async (req: Request, res: Response) => {
     console.log(valid);
 
     if (valid) {
-      res.send({
-        data: { userId: valid.id },
-        message: "You are successfully Logged in",
-        statusCode: 200,
-      });
+      const profileToken = await generateJwtToken(valid);
       res.locals.response = {
-        data: { userId: valid.email },
+        data: { success: true, jwtToken: profileToken },
         message: "You are successfully Logged in",
         statusCode: 200,
       };
+      return next();
     } else {
-      throw UnAuthorized("Invalid UserName or Password");
+      throw UnAuthorized("Invalid Password");
     }
   } catch (err: any) {
-    res.status(err.statusCode || 520).send({
-      data: {},
-      message: err?.message || err?.toString() || "Unknown error",
-      statusCode: err?.statusCode || 520,
-    });
     res.locals.response = {
       data: {},
       message: err?.message || err?.toString() || "Unknown error",
       statusCode: err?.statusCode || 520,
     };
+    return next();
   }
 };

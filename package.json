@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "prisma": {
+    "schema": "./src/prisma/schema.prisma",
     "seed": "ts-node ./src/prisma/seeds/seed.ts"
   },
   "scripts": {
@@ -15,6 +16,7 @@
   "description": "node_modules# node-be",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^22.5.2",
     "nodemon": "^3.1.4",
     "prisma": "^5.19.0",

@@ -1,12 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
 import routes from "./routes/index";
 import { PORT } from "./config";
+import cors from "cors";
 // import { middleware } from "./middleware";
-import signinRoutes from "./routes/signin-routes";
+// import signinRoutes from "./routes/signin-routes";
 const jwt = require("jsonwebtoken");
 const app = express();
-
 const port = PORT;
+app.use(cors());
 const middleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await next();
@@ -29,7 +30,6 @@ const middleware = async (req: Request, res: Response, next: NextFunction) => {
 
 app.use(express.json());
 app.use("/", routes);
-// app.use("/api/v1/auth/signin", signinRoutes);
 app.use(middleware);
 
 // Start the server

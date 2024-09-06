@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
-import { middleware } from "../middleware";
-
 import {
   createUser,
   emailExists,
