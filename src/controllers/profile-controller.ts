@@ -18,6 +18,10 @@ export const getMyProfile = async (
         where: { userId: userId },
       });
       if (loggedUser) {
+        const roleName=await prisma.emRole.findFirst({
+          where:{roleId:loggedUser.userRoleId},
+          select:{roleName:true}
+        })
         res.locals.response = {
           statusCode: 200,
           message: "success",
@@ -31,7 +35,7 @@ export const getMyProfile = async (
             state: loggedUser.userState,
             city: loggedUser.userCity,
             gender: loggedUser.userGender,
-            role: loggedUser.userRoleId,
+            role: roleName?.roleName,
           },
         };
         return next();

@@ -13,7 +13,7 @@ export const countryController = async (
     res.locals.response = {
       statusCode: 200,
       message: "Success countries",
-      data: { countries },
+      data:  countries ,
     };
     return next();
   }
